@@ -6,7 +6,7 @@ from ase.io import read
 # Build a slab from optimized structure
 # For graphene it would the traj file
 
-slab = read("/home/mehdi/Downloads/C.cif")
+slab = read("###")
 
 #Since you are dealing with grapehen you just expand it in x and y directions
 # The procedure will be different for metal slabs with different number of layers and facets
