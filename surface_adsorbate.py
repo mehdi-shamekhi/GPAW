@@ -5,11 +5,11 @@ from ase.io import read
 from gpaw import GPAW, PW
 from ase.optimize import BFGS
 
-#Read the optimized unicell
+#Read the optimized unitcell
 
-slab = read("./C.cif")
+unitcell = read("./C.cif")
 
-slab = slab * (4,4,1)
+slab = surface(unitcell, (0,0,1), 1, vacuum=10)
 
 calc = GPAW(mode=PW(200),
             xc='PBE',
@@ -24,26 +24,26 @@ opt.run(fmax=0.05)
 
 E_slab = slab.get_potential_energy()
 
-adsorbate = Atoms("2N", positions=[[0,0,0], [0,0,1.1]], cell=[10,10,10])
-adsorbate.center()
-# Perform the DFT calculation for the molecule adsorbed on the surface:
-adsorbate.set_calculator(calc)
-
-opt = BFGS(adsorbate, trajectory='adsorbate.traj',
-           logfile='adsorbate.log')
-opt.run(fmax=0.05)
-
-E_adsorbate = adsorbate.get_potential_energy()
-
+adsorbate = Atoms("2N", positions=[[0,0,0], [0,0,1.1]])
 
 add_adsorbate(slab, adsorbate, 2)
-
 
 opt = BFGS(slab, trajectory='slab_adsorbate.traj',
            logfile='slab_adsorbate.log')
 opt.run(fmax=0.05)
 
 E_total = slab.get_potential_energy()
+
+
+adsorbate = Atoms("2N", positions=[[0,0,0], [0,0,1.1]], cell=[10,10,10])
+adsorbate.center()
+
+adsorbate.set_calculator(calc)
+
+opt = BFGS(adsorbate, trajectory='adsorbate.traj',
+           logfile='adsorbate.log')
+opt.run(fmax=0.05)
+
 
 E_adsorption = E_total - E_slab - E_adsorbate
 
